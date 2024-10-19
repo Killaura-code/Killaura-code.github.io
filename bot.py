@@ -5,7 +5,7 @@ import os
 import aiosqlite
 
 from aiogram import Bot, Dispatcher, types, F
-from aiogram.utils import command, executor
+from aiogram.utils import executor
 from aiogram.utils.keyboard import ReplyKeyboardBuilder
 from aiogram.enums.content_type import ContentType
 from aiogram.filters import CommandStart

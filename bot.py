@@ -5,12 +5,11 @@ import os
 import aiosqlite
 
 from aiogram import Bot, Dispatcher, types, F
-from aiogram import executor
+from aiogram.utils import command, executor
 from aiogram.utils.keyboard import ReplyKeyboardBuilder
 from aiogram.enums.content_type import ContentType
 from aiogram.filters import CommandStart
 from aiogram.enums.parse_mode import ParseMode
-
 from usersdatabase import add_user, setup_db
 
 logging.basicConfig(level=logging.INFO)

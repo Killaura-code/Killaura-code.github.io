@@ -3,7 +3,6 @@ import json
 import aiosqlite
 
 from aiogram import Bot, Dispatcher, types, F
-from aiogram.utils.keyboard import ReplyKeyboardBuilder
 from aiogram.enums.content_type import ContentType
 from aiogram.filters import CommandStart
 from aiogram.enums.parse_mode import ParseMode
@@ -15,16 +14,21 @@ dp = Dispatcher()
 
 @dp.message(CommandStart())
 async def start(message: types.Message):
-    webAppInfo = types.WebAppInfo(url="https://killaura-code.github.io/")
     photo_url = "https://www.upload.ee/image/17277134/photo1.jpg"
-    await add_user(message.from_user.id, message.from_user.username, message.from_user.first_name, message.from_user.last_name)
-    await message.answer_photo(photo=photo_url, caption="Привет! 👋 Добро пожаловать в нашего бота, созданного для обучения в онлайн! Здесь вы сможете:\n\n"
-                           "1. Начать обучение 📚 — Откройте для себя увлекательные курсы и уроки по различным темам.\n"
-                           "2. Задать вопрос ❓ — Если у вас возникли вопросы по курсам или обучению, не стесняйтесь спрашивать!\n"
-                           "3. Посмотреть прогресс 📈 — Узнайте, как продвигается ваше обучение и какие задания еще предстоит выполнить.\n\n"
-                           "Нажмите на кнопку ниже, чтобы начать свое обучение!", 
-                           reply_markup=())
     
+    # Добавляем пользователя в базу данных
+    await add_user(message.from_user.id, message.from_user.username, message.from_user.first_name, message.from_user.last_name)
+    
+    # Отправка приветственного сообщения с фото без кнопки
+    await message.answer_photo(
+        photo=photo_url,
+        caption="Привет! 👋 Добро пожаловать в нашего бота, созданного для обучения в онлайн! Здесь вы сможете:\n\n"
+                "1. Начать обучение 📚 — Откройте для себя увлекательные курсы и уроки по различным темам.\n"
+                "2. Задать вопрос ❓ — Если у вас возникли вопросы по курсам или обучению, не стесняйтесь спрашивать!\n"
+                "3. Посмотреть прогресс 📈 — Узнайте, как продвигается ваше обучение и какие задания еще предстоит выполнить.\n\n"
+                "Нажмите на кнопку ниже, чтобы начать свое обучение!"
+    )
+
 async def add_user(user_id, username, first_name, last_name):
     try:
         async with aiosqlite.connect('bot_database.db') as db:
@@ -55,7 +59,6 @@ async def setup_db():
 
 async def main():
     await setup_db()
-    #await bot.delete_webhook(drop_pending_updates=True)
     await dp.start_polling(bot)
 
 if __name__ == "__main__":

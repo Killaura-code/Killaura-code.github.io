@@ -21,32 +21,45 @@ token_db = TokenDBSystem()
 
 @dp.message(CommandStart())
 async def start(message: types.Message):
-    # Проверка зарегистрирован ли пользователь
-        if token_db.get_balance(message.from_user.id) is None:
+    # Проверка, зарегистрирован ли пользователь
+    if token_db.get_balance(message.from_user.id) is None:
         # Если не зарегистрирован, добавляем в систему токенов
-            token_db.add_student(message.from_user.id)
+        token_db.add_student(message.from_user.id)
+        
+        # Добавляем пользователя в базу пользователей
+        await add_user(
+            message.from_user.id,
+            message.from_user.username,
+            message.from_user.first_name,
+            message.from_user.last_name
+        )
+        
+        # Отправка приветственного сообщения с фото
+        photo_url = "https://www.upload.ee/image/17277134/photo1.jpg"
+        await message.answer_photo(
+            photo=photo_url,
+            caption="Привет! 👋 Добро пожаловать в нашего бота, созданного для обучения в онлайн! Здесь вы сможете:\n\n"
+                    "1. Начать обучение 📚 — Откройте для себя увлекательные курсы и уроки по различным темам.\n"
+                    "2. Задать вопрос ❓ — Если у вас возникли вопросы по курсам или обучению, не стесняйтесь спрашивать!\n"
+                    "3. Посмотреть прогресс 📈 — Узнайте, как продвигается ваше обучение и какие задания еще предстоит выполнить.\n\n"
+                    "Нажмите на кнопку ниже, чтобы начать свое обучение!",
+            reply_markup=builder.as_markup()
+        )
+    else:
+        await message.answer("Привет! Вы уже зарегистрированы в системе токенов.")
 
-            webAppInfo = types.WebAppInfo(url="https://killaura-code.github.io/")
-            builder = ReplyKeyboardBuilder()
-            builder.add(types.KeyboardButton(text='Отправить данные', web_app=webAppInfo))
+        webAppInfo = types.WebAppInfo(url="https://killaura-code.github.io/")
+        builder = ReplyKeyboardBuilder()
+        builder.add(types.KeyboardButton(text='Отправить данные', web_app=webAppInfo))
 
-            @dp.message(F.text == "/reward")
-            async def reward_tokens(message: types.Message):
+        @dp.message(F.text == "/reward")
+        async def reward_tokens(message: types.Message):
     # Проверяем, зарегистрирован ли пользователь
-             if token_db.get_balance(message.from_user.id) is not None:
+            if token_db.get_balance(message.from_user.id) is not None:
                 token_db.reward_student(message.from_user.id, 10)  # Начислить 10 токенов
-             await message.answer("Вы получили 10 токенов!")
-        else:
-            await message.answer("Вы не зарегистрированы. Пожалуйста, используйте команду /start для регистрации.")
-    
-            photo_url = "https://www.upload.ee/image/17277134/photo1.jpg"
-            await add_user(message.from_user.id, message.from_user.username, message.from_user.first_name, message.from_user.last_name)
-            await message.answer_photo(photo=photo_url, caption="Привет! 👋 Добро пожаловать в нашего бота, созданного для обучения в онлайн! Здесь вы сможете:\n\n"
-                           "1. Начать обучение 📚 — Откройте для себя увлекательные курсы и уроки по различным темам.\n"
-                           "2. Задать вопрос ❓ — Если у вас возникли вопросы по курсам или обучению, не стесняйтесь спрашивать!\n"
-                           "3. Посмотреть прогресс 📈 — Узнайте, как продвигается ваше обучение и какие задания еще предстоит выполнить.\n\n"
-                           "Нажмите на кнопку ниже, чтобы начать свое обучение!", 
-                           reply_markup=builder.as_markup())
+                await message.answer("Вы получили 10 токенов!")
+            else: 
+                message.answer("Вы не зарегистрированы. Пожалуйста, используйте команду /start для регистрации.")
     
 async def add_user(user_id, username, first_name, last_name):
     try:

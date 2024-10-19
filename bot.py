@@ -4,7 +4,8 @@ import json
 import os
 import aiosqlite
 
-from aiogram import Bot, Dispatcher, types, executor, F
+from aiogram import Bot, Dispatcher, types, F
+from aiogram import executor
 from aiogram.utils.keyboard import ReplyKeyboardBuilder
 from aiogram.enums.content_type import ContentType
 from aiogram.filters import CommandStart

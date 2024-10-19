@@ -1,16 +1,12 @@
-import asyncio
 import logging
 import json
-import os
 import aiosqlite
 
 from aiogram import Bot, Dispatcher, types, F
-from aiogram.utils import executor
 from aiogram.utils.keyboard import ReplyKeyboardBuilder
 from aiogram.enums.content_type import ContentType
 from aiogram.filters import CommandStart
 from aiogram.enums.parse_mode import ParseMode
-from usersdatabase import add_user, setup_db
 
 logging.basicConfig(level=logging.INFO)
 
@@ -32,9 +28,6 @@ async def start(message: types.Message):
                            "Нажмите на кнопку ниже, чтобы начать свое обучение!", 
                            reply_markup=builder.as_markup())
     
-    if __name__ == '__main__':
-      executor.start_polling(dp, on_startup=setup_db)
-
 async def add_user(user_id, username, first_name, last_name):
     try:
         async with aiosqlite.connect('bot_database.db') as db:
@@ -46,15 +39,28 @@ async def add_user(user_id, username, first_name, last_name):
     except Exception as e:
         print(f"Ошибка при добавлении пользователя: {e}")
 
-
 @dp.message(F.content_type == ContentType.WEB_APP_DATA)
 async def parse_data(message: types.Message):
     data = json.loads(message.web_app_data.data)
     await message.answer(f'<b>{data["title"]}</b>\n\n<code>{data["desc"]}</code>\n\n{data["text"]}', parse_mode=ParseMode.HTML)
 
+async def setup_db():
+    async with aiosqlite.connect('bot_database.db') as db:
+        await db.execute('''
+            CREATE TABLE IF NOT EXISTS users (
+                id INTEGER PRIMARY KEY,
+                username TEXT,
+                first_name TEXT,
+                last_name TEXT
+            )
+        ''')
+        await db.commit()
+
 async def main():
+    await setup_db()
     await bot.delete_webhook(drop_pending_updates=True)
     await dp.start_polling(bot)
-    
+
 if __name__ == "__main__":
+    import asyncio
     asyncio.run(main())

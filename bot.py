@@ -55,7 +55,7 @@ async def setup_db():
 
 async def main():
     await setup_db()
-    await bot.delete_webhook(drop_pending_updates=True)
+    #await bot.delete_webhook(drop_pending_updates=True)
     await dp.start_polling(bot)
 
 if __name__ == "__main__":

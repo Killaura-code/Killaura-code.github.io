@@ -1,4 +1,4 @@
-mport logging
+import logging
 import json
 import aiosqlite
 
@@ -16,9 +16,6 @@ dp = Dispatcher()
 @dp.message(CommandStart())
 async def start(message: types.Message):
     webAppInfo = types.WebAppInfo(url="https://killaura-code.github.io/")
-    builder = ReplyKeyboardBuilder()
-    builder.add(types.KeyboardButton(text='Отправить данные', web_app=webAppInfo))
-    
     photo_url = "https://www.upload.ee/image/17277134/photo1.jpg"
     await add_user(message.from_user.id, message.from_user.username, message.from_user.first_name, message.from_user.last_name)
     await message.answer_photo(photo=photo_url, caption="Привет! 👋 Добро пожаловать в нашего бота, созданного для обучения в онлайн! Здесь вы сможете:\n\n"
@@ -26,7 +23,7 @@ async def start(message: types.Message):
                            "2. Задать вопрос ❓ — Если у вас возникли вопросы по курсам или обучению, не стесняйтесь спрашивать!\n"
                            "3. Посмотреть прогресс 📈 — Узнайте, как продвигается ваше обучение и какие задания еще предстоит выполнить.\n\n"
                            "Нажмите на кнопку ниже, чтобы начать свое обучение!", 
-                           reply_markup=builder.as_markup())
+                           reply_markup=())
     
 async def add_user(user_id, username, first_name, last_name):
     try:
